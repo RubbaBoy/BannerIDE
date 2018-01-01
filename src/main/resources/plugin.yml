@@ -1,0 +1,5 @@
+name: BannerIDE
+main: com.uddernetworks.banneride.main.Main
+author: RubbaBoy
+version: 1.0
+description: Allows you to program with banners in-game!
