@@ -10,10 +10,11 @@ import org.bukkit.plugin.java.JavaPlugin;
 public class Main extends JavaPlugin {
 
     private LetterManager letterManager;
+    private BannerCompiler bannerCompiler;
 
     @Override
     public void onEnable() {
-        letterManager = new LetterManager();
+        letterManager = new LetterManager(this);
 
         CommandManager manager = new CommandManager();
         manager.registerCommand(this, new ChangeCaseCommand());
@@ -21,8 +22,11 @@ public class Main extends JavaPlugin {
 
         Config.getDefaultOptions()
                 .enableAutoReload(true)
-                .enableAutoSave(true)
-                .setDefaultLocation(getDataFolder());
+                .enableAutoSave(true);
+
+        bannerCompiler = new BannerCompiler(this);
+
+        Config.registerAnnotatedClass(bannerCompiler);
     }
 
     @Override
@@ -32,5 +36,9 @@ public class Main extends JavaPlugin {
 
     public LetterManager getLetterManager() {
         return letterManager;
+    }
+
+    public BannerCompiler getBannerCompiler() {
+        return bannerCompiler;
     }
 }

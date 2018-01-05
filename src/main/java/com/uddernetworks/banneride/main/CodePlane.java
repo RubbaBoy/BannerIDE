@@ -32,43 +32,39 @@ public class CodePlane {
     }
 
     public void generate() {
-        System.out.println("generating...");
         for (int y = topLeft.getBlockY(); y > bottomRight.getBlockY(); y--) {
-            System.out.println("y = " + y);
             for (int x = topLeft.getBlockX(); x > bottomRight.getBlockX(); x--) {
-                System.out.println("(" + x + ", " + y + ")");
                 Block block = world.getBlockAt(x, y, topLeft.getBlockZ() + 1);
 
                 block.setType(Material.WOOL);
                 block.setData((byte) 0);
             }
         }
-
-        System.out.println("ended");
     }
 
-    public void readWall() throws IOException {
+    public BannerGrid readWall() throws IOException {
         BannerGrid bannerGrid = new BannerGrid();
 
-        for (int y = topLeft.getBlockY(); y > bottomRight.getBlockY(); y -= 2) {
+        for (int y = topLeft.getBlockY(); y > bottomRight.getBlockY(); y--) {
             List<BannerLetter> row = new ArrayList<>();
 
             for (int x = topLeft.getBlockX(); x > bottomRight.getBlockX(); x--) {
                 Block block =  world.getBlockAt(x, y, topLeft.getBlockZ());
-                System.out.println(block.getState());
-
-
-
-//                Banner banner = (Banner) block.getState();
-//                System.out.println("banner = " + banner);
 
                 if (block.getType() == Material.WALL_BANNER) {
                     Banner banner = (Banner) block.getState();
 
-//                    List<PatternType> types = new ArrayList<>();
-//                    for (Pattern pattern : banner.getPatterns()) {
-//                        types.add(pattern.getPattern());
-//                    }
+                    Pattern end = banner.getPattern(banner.getPatterns().size() - 1);
+
+                    List<Pattern> patterns = new ArrayList<>();
+                    for (int i = 0; i < banner.getPatterns().size() - 1; i++) {
+                        patterns.add(banner.getPattern(i));
+                    }
+
+                    if (end.getPattern() == PatternType.TRIANGLES_BOTTOM) {
+                        banner.setPatterns(patterns);
+                        banner.update();
+                    }
 
                     row.add(new BannerLetter(main.getLetterManager().getLetterFromPattern(banner), block.getLocation()));
                 } else {
@@ -79,15 +75,13 @@ public class CodePlane {
             bannerGrid.addRow(row);
         }
 
-
-        System.out.println("Parsed text:");
-        System.out.println(bannerGrid);
-
         CustomJavaRenderer customJavaRenderer = new CustomJavaRenderer();
         String colors = customJavaRenderer.highlight(bannerGrid.toString());
 
         BannerFormatter formatter = new BannerFormatter();
         formatter.formatBanners(bannerGrid, colors);
+
+        return bannerGrid;
     }
 
 }

@@ -2,6 +2,7 @@ package com.uddernetworks.banneride.highlighter;
 
 import com.uddernetworks.banneride.main.BannerGrid;
 import com.uddernetworks.banneride.main.BannerLetter;
+import org.bukkit.DyeColor;
 
 import java.util.List;
 
@@ -13,16 +14,14 @@ public class BannerFormatter {
 
         for (int i = 0; i < lines.length; i++) {
             List<BannerLetter> row = grid.getRow(i);
-            System.out.println("line = " + lines[i]);
-            String[] chars = lines[i].split("");
+            String[] chars = lines[i].split(" ");
 
             for (int i2 = 0; i2 < chars.length; i2++) {
-//                System.out.println("chars[i2] = " + chars[i2]);
-                int curr = Integer.valueOf(chars[i2]);
-                row.get(i2).setColor(curr);
+                String color = chars[i2];
+                if (!color.trim().equals("")) {
+                    row.get(i2).setColor(DyeColor.valueOf(color));
+                }
             }
         }
-
     }
-
 }

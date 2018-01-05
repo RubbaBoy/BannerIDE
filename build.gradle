@@ -19,6 +19,7 @@ repositories {
 
 shadowJar {
     dependencies {
+        include(dependency("com.uddernetworks.config:RubbaBoysConfigHelper:1.1-SNAPSHOT"))
         include(dependency("com.uddernetworks.command:CommandHelper:1.0-SNAPSHOT"))
     }
 }

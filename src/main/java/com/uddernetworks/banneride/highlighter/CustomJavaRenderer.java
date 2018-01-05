@@ -1,7 +1,5 @@
 package com.uddernetworks.banneride.highlighter;
 
-import com.uddernetworks.banneride.main.StringUtils;
-
 import java.io.*;
 
 public class CustomJavaRenderer {
@@ -9,25 +7,25 @@ public class CustomJavaRenderer {
     private String getCssClass(int style) {
         switch (style) {
             case 1:
-                return "0";
+                return "BLACK";
             case 2:
-                return "0";
+                return "BLACK";
             case 3:
-                return "1";
+                return "BLUE";
             case 4:
-                return "2";
+                return "GREEN";
             case 5:
-                return "1";
+                return "BLUE";
             case 6:
-                return "4";
+                return "RED";
             case 7:
-                return "7";
+                return "GRAY";
             case 8:
-                return "7";
+                return "GRAY";
             case 9:
-                return "7";
+                return "GRAY";
             default:
-                return "0";
+                return "BLACK";
         }
     }
 
@@ -45,11 +43,7 @@ public class CustomJavaRenderer {
         int length;
         int style;
         String css_class;
-        int previous_style = 0;
-        boolean newline = false;
         while ((line = r.readLine()) != null) {
-            line = StringUtils.convertTabsToSpaces(line, 4);
-
             Reader lineReader = new StringReader(line);
             highlighter.setReader(lineReader);
             int index = 0;
@@ -58,26 +52,15 @@ public class CustomJavaRenderer {
                 length = highlighter.getTokenLength();
                 token = line.substring(index, index + length).toCharArray();
 
-
-//                if (style != previous_style || newline) {
                 for (char ignored : token) {
                     css_class = getCssClass(style);
 
-                    if (css_class != null) {
-                        builder.append(css_class);
-                    }
+                    builder.append(css_class).append(" ");
                 }
-
-//                    previous_style = style;
-//                }
-
-//                newline = false;
-//                builder.append(token);
 
                 index += length;
             }
 
-            newline = true;
             builder.append("\n");
         }
 

@@ -15,13 +15,11 @@ import java.util.List;
 
 public class BannerLetter {
 
+    private boolean highlighted = false;
     private final String letter;
     private final Location location;
-    private List<Pattern> patterns;
     private Banner banner;
     private DyeColor letterColor;
-    private List<Pattern> o = Arrays.asList(new Pattern(DyeColor.WHITE, PatternType.RHOMBUS_MIDDLE), new Pattern(DyeColor.BLACK, PatternType.STRIPE_LEFT), new Pattern(DyeColor.BLACK, PatternType.STRIPE_RIGHT), new Pattern(DyeColor.WHITE, PatternType.BORDER));
-//    private List<PatternType>
 
     public BannerLetter(String letter, Location location) {
         this.letter = letter;
@@ -29,14 +27,9 @@ public class BannerLetter {
 
         Block block = location.getBlock();
 
-        if (block.getType() != Material.WALL_BANNER) {
-            this.patterns = new ArrayList<>();
-            return;
-        }
+        if (block.getType() != Material.WALL_BANNER) return;
 
         this.banner = (Banner) block.getState();
-
-        this.patterns = new ArrayList<>(this.banner.getPatterns());
     }
 
     public String getLetter() {
@@ -47,24 +40,8 @@ public class BannerLetter {
         return location;
     }
 
-    public void setColor(int color) {
-        switch (color) {
-            case 0:
-                letterColor = DyeColor.BLACK;
-                break;
-            case 1:
-                letterColor = DyeColor.BLUE;
-                break;
-            case 2:
-                letterColor = DyeColor.GREEN;
-                break;
-            case 4:
-                letterColor = DyeColor.RED;
-                break;
-            case 7:
-                letterColor = DyeColor.GRAY;
-                break;
-        }
+    public void setColor(DyeColor color) {
+        this.letterColor = color;
 
         if (banner == null) return;
 
@@ -86,6 +63,37 @@ public class BannerLetter {
         banner.setPatterns(newPatterns);
 
         banner.update();
+    }
+
+    public void setHighlighted(boolean highlighted) {
+        if (banner == null) return;
+
+        List<Pattern> patterns = banner.getPatterns();
+        List<Pattern> newPatterns = new ArrayList<>();
+
+        if (banner.getBaseColor() == DyeColor.BLACK) {
+            banner.setBaseColor(letterColor);
+        }
+
+        for (Pattern pattern : patterns) {
+            if (pattern.getColor() == DyeColor.WHITE || pattern.getColor() == DyeColor.YELLOW) {
+                newPatterns.add(pattern);
+            } else {
+                newPatterns.add(new Pattern(letterColor, pattern.getPattern()));
+            }
+        }
+
+        if (this.highlighted && !highlighted) {
+            newPatterns.remove(newPatterns.size());
+        } else if (!this.highlighted && highlighted) {
+            newPatterns.add(new Pattern(DyeColor.RED, PatternType.TRIANGLES_BOTTOM));
+        }
+
+        banner.setPatterns(newPatterns);
+
+        banner.update();
+
+        this.highlighted = highlighted;
     }
 
     @Override
